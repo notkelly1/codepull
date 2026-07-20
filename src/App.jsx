@@ -10,7 +10,16 @@ import './App.css'
 
 function App() {
   //declaring it in App.jsx moves the collection state up to the App component so it can be shared between RollPage and CollectionPage, instead of being local to RollPage
-  const [collection, setCollection] = useState([])
+  const [collection, setCollection] = useState(() => {
+    //persist the collection to localstorage (not lost on refresh) and load it from localstorage on app start
+    const savedCollection = localStorage.getItem('collection')
+    return savedCollection ? JSON.parse(savedCollection) : []
+  }) //close useState
+
+  //useEffect runs after every render, so it can be used to persist the collection to localstorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('collection', JSON.stringify(collection))
+  }, [collection])
 
   //moves the codingStats state up to the App component (similarly to the others)
   const [codingStats, setCodingStats] = useState(null)
@@ -31,8 +40,17 @@ function App() {
 
   const totalPullsEarned = Math.floor(totalMinutesCoded / MINUTES_PER_PULL)
   
-  //track how many pulls have already been spent
-  const [pullsSpent, setPullsSpent] = useState(0)
+  //track how many pulls have already been spent and persist it to local storage
+  const [pullsSpent, setPullsSpent] = useState(() => {
+    const saved = localStorage.getItem('codepull-pulls-spent')
+    return saved ? Number(saved) : 0
+  })
+
+  useEffect(() => {
+    localStorage.setItem('codepull-pulls-spent', pullsSpent)
+  }, [pullsSpent])
+   
+  
 
   const pullsAvailable = totalPullsEarned - pullsSpent
 
