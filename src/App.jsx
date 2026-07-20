@@ -54,7 +54,7 @@ function App() {
       </nav>
 
       {/*temporary debug tool*/}
-      {codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}
+      {/*{codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}*/}
 
       <Routes>
         {/*passing the property (prop) to the RollPage*/}

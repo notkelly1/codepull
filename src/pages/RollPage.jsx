@@ -20,7 +20,9 @@ function RollPage({ addToCollection, pullsAvailable, spendPull }) {
       <h1>Codepull</h1>
       <p>Pulls available: {pullsAvailable}</p>
       {/* button that calls handleRoll function when clicked, triggering a new gacha roll */}
-      <button onClick={handleRoll}>Roll</button>
+      <button onClick={handleRoll} disabled={pullsAvailable <= 0}>
+        Roll
+      </button>
       {/* if selectedCreature is not null, display the creature's emoji, name, and rarity */}
       {selectedCreature && (
         <div
