@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+#.env.local covered by gitignore so API key stored there doesn't get leaked in commits
 *.local
 
 # Editor directories and files

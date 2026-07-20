@@ -1,5 +1,6 @@
-import { useState } from 'react'
-//enables routing between pages in the app, decides which page to show based on current URL
+import { useState, useEffect } from 'react'
+import { fetchCodingStats } from './hackatime' 
+//BrowserRouter enables routing between pages in the app, decides which page to show based on current URL
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import RollPage from './pages/RollPage'
 import CollectionPage from './pages/CollectionPage'
@@ -8,8 +9,16 @@ import CreatureDetailPage from './pages/CreatureDetailPage'
 import './App.css'
 
 function App() {
-  //moves the collection state up to the App component so it can be shared between RollPage and CollectionPage, instead of being local to RollPage
+  //declaring it in App.jsx moves the collection state up to the App component so it can be shared between RollPage and CollectionPage, instead of being local to RollPage
   const [collection, setCollection] = useState([])
+  //moves the codingStats state up to the App component (similarly to the others)
+  const [codingStats, setCodingStats] = useState(null)
+  
+  useEffect(() => {
+    fetchCodingStats()
+      .then(data => setCodingStats(data))
+      .catch(error => console.error(error))
+  }, [])
   
   //creating new array with the new creature added to the end of the previous collection
   function addToCollection(creature) {
@@ -23,6 +32,9 @@ function App() {
         <Link to="/">Roll</Link>
         <Link to="/collection">Collection</Link>
       </nav>
+
+      {/*temporary debug tool*/}
+      {codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}
 
       <Routes>
         {/*passing the property (prop) to the RollPage*/}
