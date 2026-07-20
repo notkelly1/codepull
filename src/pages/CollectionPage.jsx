@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-function CollectionPage({ collection }) {
+function CollectionPage({ collection, favorites, toggleFavorite }) {
   return (
     <div className="app">
       <h1>Collection</h1>
@@ -11,15 +11,20 @@ function CollectionPage({ collection }) {
         <div className="collection-grid">
           {/*map transforms every item in the creature array into a component*/}
           {collection.map((creature, index) => (
-              <Link
-                key={index}
-                to={`/creature/${creature.id}`}
-                className="collection-item"
-                style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
-              >
+            <div
+              key={index}
+              className="collection-item"
+              style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
+            >
+              <Link to={`/creature/${creature.id}`}>
                 <div className="emoji">{creature.emoji}</div>
                 <p>{creature.name}</p>
               </Link>
+              {/*link moved so that clicking star won't navigate */}
+              <button onClick={() => toggleFavorite(index)}>
+                {favorites.includes(index) ? '★' : '☆'}
+              </button>
+            </div>
           ))} {/*closes the map*/}
         </div>
       )}

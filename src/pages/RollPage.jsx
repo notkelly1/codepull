@@ -3,7 +3,7 @@
 import {useState} from 'react' 
 import {CREATURES} from '../creatures'
 
-function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded }) {
+function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus }) {
     const [selectedCreature, setSelectedCreature] = useState(null)
 
 {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
@@ -29,6 +29,10 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       <button onClick={handleRoll} disabled={pullsAvailable <= 0}>
         Roll
       </button>
+      {/* daily bonus button */}
+      {canClaimDaily && (
+        <button onClick={claimDailyBonus}>Claim Daily Bonus Pull</button>
+      )}
       {/* if selectedCreature is not null, display the creature's emoji, name, and rarity */}
       {selectedCreature && (
         <div

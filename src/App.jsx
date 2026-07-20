@@ -49,9 +49,8 @@ function App() {
   useEffect(() => {
     localStorage.setItem('codepull-pulls-spent', pullsSpent)
   }, [pullsSpent])
-   
   
-
+  //calculate pulls available by subtracting pulls spent from total pulls earned
   const pullsAvailable = totalPullsEarned - pullsSpent
 
   function spendPull() {
@@ -63,6 +62,38 @@ function App() {
     setCollection(prevCollection => [...prevCollection, creature])
   }
 
+  //daily bonus pull state
+  const [lastClaimDate, setLastClaimDate] = useState(() => {
+    return localStorage.getItem('last-claim-date') || null
+  })
+
+  const today = new Date().toDateString() //logic only depends on calendar day
+  const canClaimDaily = lastClaimDate !== today
+
+  function claimDailyBonus() {
+    setPullsSpent((prev) => prev - 1) //instead of creating a new state variable for daily bonus pulls, we can just subtract 1 from pullsSpent to give the user an extra pull
+    setLastClaimDate(today)
+    localStorage.setItem('last-claim-date', today)
+  }
+  
+  // favouriting creatures state
+  //favourites are an array of indexes in the collection array
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem('favorites')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites))
+  }, [favorites])
+  //toggleFavorite function uses a ternary (compact if then statement) to check if it is already favorited
+  function toggleFavorite(index) {
+    setFavorites((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index]
+    )
+  }
   return (
     <BrowserRouter>
     {/* render as <a> tags, clicking them changes the URL without reloading the page, instead by swapping components (renders a differrent screen, without asking the browser to fetch a whole new HTML page) */}
@@ -82,12 +113,22 @@ function App() {
               pullsAvailable={pullsAvailable} 
               spendPull={spendPull} 
               totalMinutesCoded={totalMinutesCoded}
+              canClaimDaily={canClaimDaily}
+              claimDailyBonus={claimDailyBonus}
             />
           } 
         /> {/*closes route for RollPage*/}
         
         {/*passing the property (prop) to the CollectionPage*/}
-        <Route path="/collection" element={<CollectionPage collection={collection} />} />
+        <Route path="/collection" element={<CollectionPage
+              collection={collection}
+              //pass favourites down to CollectionPage
+              favorites={favorites}
+              toggleFavorite={toggleFavorite} 
+            />
+          } 
+        />
+        
         {/*passing the property to creatureDetailPage,id is a dynamic parameter, can be any value, used to identify which creature to show details for*/}
         <Route path="/creature/:id" element={<CreatureDetailPage collection={collection} />} />
       </Routes>
