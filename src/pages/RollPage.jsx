@@ -3,14 +3,16 @@
 import {useState} from 'react' 
 import {CREATURES} from '../creatures'
 
-function RollPage() {
-  const [selectedCreature, setSelectedCreature] = useState(null)
+function RollPage({ addToCollection }) {
+    const [selectedCreature, setSelectedCreature] = useState(null)
 
-  {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
-  function handleRoll() {
-    const randomIndex = Math.floor(Math.random() * CREATURES.length)
-    setSelectedCreature(CREATURES[randomIndex])
-  }
+{/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
+    function handleRoll() {
+        const randomIndex = Math.floor(Math.random() * CREATURES.length)
+        const creature = CREATURES[randomIndex]
+        setSelectedCreature(creature)
+        addToCollection(creature)
+    }
 
   return (
     <div className="app">

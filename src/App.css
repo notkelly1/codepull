@@ -219,3 +219,22 @@ h1 {
 .result-card h2 {
   margin: 8px 0 4px;
 }
+
+/*matching css to collectionPage, displaying creature items*/
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.collection-item {
+  border: 2px solid var(--rarity-color, var(--color-common));
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.collection-item .emoji {
+  font-size: 2rem;
+}
