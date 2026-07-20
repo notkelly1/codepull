@@ -8,6 +8,11 @@ function RollPage({ addToCollection, pullsAvailable, spendPull }) {
 
 {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
     function handleRoll() {
+      //check if there are pulls available before allowing a roll
+      if (pullsAvailable <= 0) {
+        alert('No pulls available! Earn more by coding!')
+        return
+      }
         const randomIndex = Math.floor(Math.random() * CREATURES.length)
         const creature = CREATURES[randomIndex]
         setSelectedCreature(creature)
