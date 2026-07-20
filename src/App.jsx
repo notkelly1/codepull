@@ -25,10 +25,12 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<RollPage />} />
-        <Route path="/collection" element={<CollectionPage />} />
-        {/*id is a dynamic parameter, can be any value, used to identify which creature to show details for*/}
-        <Route path="/creature/:id" element={<CreatureDetailPage />} />
+        {/*passing the property (prop) to the RollPage*/}
+        <Route path="/" element={<RollPage addToCollection={addToCollection} />} />
+        {/*passing the property (prop) to the CollectionPage*/}
+        <Route path="/collection" element={<CollectionPage collection={collection} />} />
+        {/*passing the property to creatureDetailPage,id is a dynamic parameter, can be any value, used to identify which creature to show details for*/}
+        <Route path="/creature/:id" element={<CreatureDetailPage collection={collection} />} />
       </Routes>
     </BrowserRouter>
   )

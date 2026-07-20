@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function CollectionPage({ collection }) {
   return (
     <div className="app">
@@ -9,15 +11,16 @@ function CollectionPage({ collection }) {
         <div className="collection-grid">
           {/*map transforms every item in the creature array into a component*/}
           {collection.map((creature, index) => (
-            <div
-              key={index}
-              className="collection-item"
-              style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
-            >
-              <div className="emoji">{creature.emoji}</div>
-              <p>{creature.name}</p>
-            </div>
-          ))}
+              <Link
+                key={index}
+                to={`/creature/${creature.id}`}
+                className="collection-item"
+                style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
+              >
+                <div className="emoji">{creature.emoji}</div>
+                <p>{creature.name}</p>
+              </Link>
+          ))} {/*closes the map*/}
         </div>
       )}
     </div>
