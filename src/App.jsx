@@ -1,36 +1,27 @@
+//enables routing between pages in the app, decides which page to show based on current URL
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import RollPage from './pages/RollPage'
+import CollectionPage from './pages/CollectionPage'
+import CreatureDetailPage from './pages/CreatureDetailPage'
+//CSS imports globally to the whole page (always rendered because it wraps to every route)
 import './App.css'
-{/*used to remember things between renders instead of forgetting them instantly*/}
-import {useState} from 'react' 
-import {CREATURES} from './creatures'
 
 function App() {
-  const [selectedCreature, setSelectedCreature] = useState(null)
-
-  {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
-  function handleRoll() {
-    const randomIndex = Math.floor(Math.random() * CREATURES.length)
-    setSelectedCreature(CREATURES[randomIndex])
-  }
-
   return (
-    <div className="app">
-      <h1>Codepull</h1>
-      {/* button that calls handleRoll function when clicked, triggering a new gacha roll */}
-      <button onClick={handleRoll}>Roll</button>
-      {/* if selectedCreature is not null, display the creature's emoji, name, and rarity */}
-      {selectedCreature && (
-        <div
-          //key used so each new creature  is treated as a separate entity, re-triggering the animation
-          key={selectedCreature.id}
-          className="result-card"
-          style={{ '--rarity-color': `var(--color-${selectedCreature.rarity})` }}
-        >
-          <div className='emoji'>{selectedCreature.emoji}</div>
-          <h2>{selectedCreature.name}</h2>
-          <p className="rarity">Rarity: {selectedCreature.rarity}</p>
-        </div>
-      )}
-    </div>
+    <BrowserRouter>
+    {/* render as <a> tags, clicking them changes the URL without reloading the page, instead by swapping components (renders a differrent screen, without asking the browser to fetch a whole new HTML page) */}
+      <nav>
+        <Link to="/">Roll</Link>
+        <Link to="/collection">Collection</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<RollPage />} />
+        <Route path="/collection" element={<CollectionPage />} />
+        {/*id is a dynamic parameter, can be any value, used to identify which creature to show details for*/}
+        <Route path="/creature/:id" element={<CreatureDetailPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
