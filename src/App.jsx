@@ -63,6 +63,7 @@ function App() {
               addToCollection={addToCollection} 
               pullsAvailable={pullsAvailable} 
               spendPull={spendPull} 
+              totalMinutesCoded={totalMinutesCoded}
             />
           } 
         /> {/*closes route for RollPage*/}
