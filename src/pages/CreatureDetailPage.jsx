@@ -25,7 +25,7 @@ function CreatureDetailPage({ collection }) {
         className="result-card"
         style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
       >
-        <div className="emoji">{creature.emoji}</div>
+        <img className="creature-image" src={creature.image} alt={creature.name} />
         <h2>{creature.name}</h2>
         <p className="rarity">Rarity: {creature.rarity}</p>
       </div>

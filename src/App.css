@@ -238,3 +238,116 @@ h1 {
 .collection-item .emoji {
   font-size: 2rem;
 }
+
+/*animation for gachapon machine spinning*/
+.gachapon-machine {
+  margin-top: 24px;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.handle {
+  font-size: 4rem;
+}
+
+.handle.turning {
+  animation: spin 0.9s linear;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.capsule {
+  font-size: 4rem;
+  cursor: pointer;
+  animation: drop 0.4s ease-in;
+}
+
+@keyframes drop {
+  from { transform: translateY(-40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.capsule.shake {
+  animation: shake 0.4s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+/*custom image of creature in place of emoji*/
+.creature-image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+/*capsule css*/
+.machine-dome {
+  position: relative;
+  width: 260px;
+  height: 220px;
+  margin: 24px auto 0;
+  border-radius: 130px 130px 20px 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 3px solid rgba(255,255,255,0.25);
+  overflow: hidden;
+}
+
+.dome-ball {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.25);
+}
+
+.gachapon-machine {
+  position: relative;
+  z-index: 1;
+}
+
+/*capsule splitting animation*/
+.capsule-container {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+  animation: drop 0.4s ease-in;
+}
+
+.capsule-half {
+  position: absolute;
+  width: 70px;
+  height: 35px;
+  background: var(--capsule-color, var(--color-common));
+  transition: transform 0.4s ease-in;
+}
+
+.capsule-half.top {
+  top: 0;
+  border-radius: 35px 35px 0 0;
+}
+
+.capsule-half.bottom {
+  bottom: 0;
+  border-radius: 0 0 35px 35px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.capsule-container.shake {
+  animation: shake 0.4s ease-in-out infinite;
+}
+
+.capsule-container.opening .capsule-half.top {
+  transform: translateY(-40px) rotate(-15deg);
+}
+
+.capsule-container.opening .capsule-half.bottom {
+  transform: translateY(40px) rotate(15deg);
+}

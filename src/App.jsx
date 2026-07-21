@@ -16,7 +16,7 @@ function App() {
     return savedCollection ? JSON.parse(savedCollection) : []
   }) //close useState
 
-  //useEffect runs after every render, so it can be used to persist the collection to localstorage whenever it changes
+  //useEffect used to persist the collection to local storage
   useEffect(() => {
     localStorage.setItem('collection', JSON.stringify(collection))
   }, [collection])
@@ -24,10 +24,19 @@ function App() {
   //moves the codingStats state up to the App component (similarly to the others)
   const [codingStats, setCodingStats] = useState(null)
   
+  //useEffect to fetch coding stats
   useEffect(() => {
     fetchCodingStats()
       .then(data => setCodingStats(data))
       .catch(error => console.error(error))
+
+    const interval = setInterval(() => {
+      fetchCodingStats()
+        .then(data => setCodingStats(data))
+        .catch(error => console.error(error))
+    }, 60000)
+
+    return () => clearInterval(interval)
   }, [])
 
   //compute currency as dervied state

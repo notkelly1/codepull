@@ -17,8 +17,7 @@ function CollectionPage({ collection, favorites, toggleFavorite }) {
               style={{ '--rarity-color': `var(--color-${creature.rarity})` }}
             >
               <Link to={`/creature/${creature.id}`}>
-                <div className="emoji">{creature.emoji}</div>
-                <p>{creature.name}</p>
+                <img className="creature-image" src={creature.image} alt={creature.name} />
               </Link>
               {/*link moved so that clicking star won't navigate */}
               <button onClick={() => toggleFavorite(index)}>
