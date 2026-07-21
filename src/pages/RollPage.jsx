@@ -59,8 +59,10 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
     <div className="app">
       <h1>Codepull</h1>
       <p style={{ color: 'yellow' }}>DEBUG - current stage: {stage}</p>
-      <p>Minutes coded: {totalMinutesCoded}</p>
-      <p>Pulls available: {pullsAvailable}</p>
+      <div className="stats-bar">
+        <span>⏱ {totalMinutesCoded}m coded</span>
+        <span>🎟 {pullsAvailable} pulls</span>
+      </div>
       {canClaimDaily && (
         <button onClick={claimDailyBonus}>Claim Daily Bonus Pull</button>
       )}
