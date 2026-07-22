@@ -211,6 +211,17 @@ h1 {
   animation: reveal 0.35s ease-out;
 }
 
+.result-card-overlay {
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px;
+  border-radius: 12px;
+}
+
 .result-card .emoji {
   font-size: 4rem;
   margin-bottom: 8px;
@@ -306,11 +317,14 @@ h1 {
 
 /*capsule splitting animation*/
 .capsule-container {
-  position: relative;
+  position: absolute;
+  top: 300%;
+  left: 44%;
   width: 70px;
   height: 70px;
   cursor: pointer;
   animation: drop 0.4s ease-in;
+  z-index: 2;
 }
 
 .capsule-half {

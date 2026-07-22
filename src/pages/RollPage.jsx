@@ -91,7 +91,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
             </>
           )} {/*close idle stage conditional*/}
 
-          {stage === 'twisting' && (
+          {(stage === 'twisting' || stage === 'capsule-dropped' || stage === 'capsule-shaking' || stage === 'capsule-open' || stage === 'revealed') && (
             <>
               <img src={catFed} className="layer" alt="Cat fed" />
               <img src={handleTurned} className="layer" alt="Handle turned" />
@@ -109,21 +109,23 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
               <div className="capsule-half bottom" />
             </div>
           )}
+
+          {/*renders the revealed creature card over top of the gachapon machine asset */}
+          {stage === 'revealed' && selectedCreature && (
+            <div
+              className="result-card result-card-overlay"
+              style={{ '--rarity-color': `var(--color-${selectedCreature.rarity})` }}
+            >
+              <img className="creature-image" src={selectedCreature.image} alt={selectedCreature.name} />
+              <h2>{selectedCreature.name}</h2>
+              <p className="rarity">Rarity: {selectedCreature.rarity}</p>
+              <button onClick={handleReset}>Roll Again</button>
+            </div>
+          )}
         </div> {/*close gachapon machine div*/}
       </div> {/*close machine dome div*/}
-      {stage === 'revealed' && selectedCreature && (
-        <div
-          className="result-card"
-          style={{ '--rarity-color': `var(--color-${selectedCreature.rarity})` }}
-        >
-          <img className="creature-image" src={selectedCreature.image} alt={selectedCreature.name} />
-          <h2>{selectedCreature.name}</h2>
-          <p className="rarity">Rarity: {selectedCreature.rarity}</p>
-          <button onClick={handleReset}>Roll Again</button>
-        </div> //close result-card div
-      )} {/*close revealed stage conditional*/}
     </div>
-  ) //close return
+  )//close return
 }
 
 export default RollPage
