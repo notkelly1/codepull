@@ -1,28 +1,34 @@
 //holds current roll logic
 {/*used to remember things between renders instead of forgetting them instantly*/}
-import {useState} from 'react' 
+import {useState, useEffect} from 'react' 
 import {CREATURES} from '../creatures'
 //import custom UI
 import catHungry from '../assets/cat-hungry.png'
 import catFed from '../assets/cat-fed.png'
 import handleUp from '../assets/handle-up.png'
 import handleTurned from '../assets/handle-turned.png'
+import capsulesFrame1 from '../assets/capsules-1.png'
+import capsulesFrame2 from '../assets/capsules-2.png'
+import capsulesFrame3 from '../assets/capsules-3.png'
 
 function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
+  const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
+    //shake capsules
+    const CAPSULE_FRAMES = [capsulesFrame1, capsulesFrame2, capsulesFrame3]
 
-  /*gachapon balls
-  const [balls] = useState(() => {
-    const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22']
-    return Array.from({ length: 24 }, (_, i) => ({
-      id: i,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      top: Math.random() * 80,
-      left: Math.random() * 80,
-      size: 20 + Math.random() * 16,
-    }))
-  })*/
+    //cycles frames while shaking
+    useEffect(() => {
+      if (stage !== 'twisting' && stage !== 'capsule-shaking') return
+
+      const interval = setInterval(() => {
+        setBallFrame((prev) => (prev + 1) % CAPSULE_FRAMES.length)
+      }, 150) // swap frame every 150ms — tune for shake speed
+
+      return () => clearInterval(interval)
+    }, [stage])
+
 
 {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
     function handleRoll() {
@@ -72,9 +78,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       <div className="machine-dome">
         {/*gachapon balls, positioned to show through the transparent glass on the machine art*/}
         <div className="balls-layer">
-          <div className="dome-ball" style={{ background: '#e74c3c', top: '25%', left: '35%' }} />
-          <div className="dome-ball" style={{ background: '#3498db', top: '30%', left: '50%' }} />
-          <div className="dome-ball" style={{ background: '#f1c40f', top: '35%', left: '42%' }} />
+          <img src={CAPSULE_FRAMES[ballFrame]} className="capsules-image" alt="" />
         </div>
 
         <div className="gachapon-machine">
@@ -126,6 +130,6 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       </div> {/*close machine dome div*/}
     </div>
   )//close return
-}
+}//close RollPage function
 
 export default RollPage
