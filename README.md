@@ -4,7 +4,7 @@ Codepull is a Web Playable application that uses the time I spent coding and tur
 ![gacha creature](src/assets/screenshot2.png)
 
 ## Tech Stack
-React for UI and state management 
+- React for UI and state management 
 - Vite as build tool and for dev server
 - react Router for client side routing
 - Hackatime API to fetch my coding time
