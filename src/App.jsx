@@ -1,3 +1,5 @@
+//authentication
+import AuthCallbackPage from './pages/AuthCallbackPage'
 import { useState, useEffect } from 'react'
 import { fetchCodingStats } from './hackatime' 
 //BrowserRouter enables routing between pages in the app, decides which page to show based on current URL
@@ -9,17 +11,22 @@ import CreatureDetailPage from './pages/CreatureDetailPage'
 import './App.css'
 
 function App() {
+  //useState to track whether a token exists
+  const [hackatimeToken, setHackatimeToken] = useState(() => {
+    return localStorage.getItem('hackatime-token') || null
+  })//close useState for hackatimeToken
+
   //declaring it in App.jsx moves the collection state up to the App component so it can be shared between RollPage and CollectionPage, instead of being local to RollPage
   const [collection, setCollection] = useState(() => {
     //persist the collection to localstorage (not lost on refresh) and load it from localstorage on app start
     const savedCollection = localStorage.getItem('collection')
     return savedCollection ? JSON.parse(savedCollection) : []
-  }) //close useState
+  }) //close useState for collection
 
   //useEffect used to persist the collection to local storage
   useEffect(() => {
     localStorage.setItem('collection', JSON.stringify(collection))
-  }, [collection])
+  }, [collection]) //close useEffect for collection
 
   //moves the codingStats state up to the App component (similarly to the others)
   const [codingStats, setCodingStats] = useState(null)
@@ -107,14 +114,26 @@ function App() {
     <BrowserRouter>
     {/* render as <a> tags, clicking them changes the URL without reloading the page, instead by swapping components (renders a differrent screen, without asking the browser to fetch a whole new HTML page) */}
       <nav>
+        {/*conditionally render the connect with Hackatime button if the user is not logged in (no token)*/}
+        {!hackatimeToken && ( 
+          <a href={`https://hackatime.hackclub.com/oauth/authorize?client_id=${import.meta.env.VITE_HACKATIME_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/callback&response_type=code&scope=profile+read`}>
+            Connect with Hackatime
+          </a>
+        )}
         <Link to="/">Roll</Link>
         <Link to="/collection">Collection</Link>
       </nav>
 
       {/*temporary debug tool*/}
-      {/*{codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}*/}
+      {codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}
 
       <Routes>
+        {/*route for the auth callback page, which is where the user is redirected after logging in to Hackatime*/} 
+        <Route path="/auth/callback" element={<AuthCallbackPage 
+            />
+          } 
+        /> {/*closes route for AuthCallbackPage*/}
+
         {/*passing the property (prop) to the RollPage*/}
         <Route path="/" element={<RollPage 
               //pass balance information down to RollPage
@@ -136,10 +155,14 @@ function App() {
               toggleFavorite={toggleFavorite} 
             />
           } 
-        />
+        />{/*closes route for CollectionPage*/}
         
         {/*passing the property to creatureDetailPage,id is a dynamic parameter, can be any value, used to identify which creature to show details for*/}
-        <Route path="/creature/:id" element={<CreatureDetailPage collection={collection} />} />
+        <Route path="/creature/:id" element={<CreatureDetailPage 
+              collection={collection} 
+            />
+          } 
+        />{/*closes route for CreatureDetailPage*/}
       </Routes>
     </BrowserRouter>
   )
