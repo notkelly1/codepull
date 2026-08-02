@@ -1,7 +1,7 @@
 //holds current roll logic
 {/*used to remember things between renders instead of forgetting them instantly*/}
-import {useState, useEffect} from 'react' 
-import {CREATURES} from '../creatures'
+import {useState, useEffect, useRef} from 'react' 
+import {getRandomCreature} from '../creatures'
 //import custom UI
 import catHungry from '../assets/cat-hungry.png'
 import catFed from '../assets/cat-fed.png'
@@ -15,19 +15,28 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
   const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
-    //shake capsules
-    const CAPSULE_FRAMES = [capsulesFrame1, capsulesFrame2, capsulesFrame3]
+  const timeoutRef = useRef([]) //ref to hold the timeout ID for clearing later
+  //timeoutRef is used to store the IDs of the timeouts so that they can be cleared if the component unmounts (for example, if the user navigates away from roll page mid animation)
+  //shake capsules
+  const CAPSULE_FRAMES = [capsulesFrame1, capsulesFrame2, capsulesFrame3]
+  
+  // clears pending timeouts for components
+  useEffect(() => {
+    return () => {
+      timeoutRef.current.forEach(clearTimeout)
+    }
+  }, [])
 
-    //cycles frames while shaking
-    useEffect(() => {
-      if (stage !== 'twisting' && stage !== 'capsule-shaking') return
+  //cycles frames while shaking
+  useEffect(() => {
+    if (stage !== 'twisting' && stage !== 'capsule-shaking') return
 
-      const interval = setInterval(() => {
-        setBallFrame((prev) => (prev + 1) % CAPSULE_FRAMES.length)
-      }, 150) // swap frame every 150ms — tune for shake speed
+    const interval = setInterval(() => {
+      setBallFrame((prev) => (prev + 1) % CAPSULE_FRAMES.length)
+    }, 150) // swap frame every 150ms — tune for shake speed
 
-      return () => clearInterval(interval)
-    }, [stage])
+    return () => clearInterval(interval)
+  }, [stage])
 
 
 {/* function that handles the gacha roll, picks a random index into the CREATURES array and calls setSelectedCreature, triggering react to update the UI with new value*/}
@@ -38,17 +47,16 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
         return
       }
 
-        setStage('twisting')
+      setStage('twisting')
 
-        setTimeout(() => {
-
-        const randomIndex = Math.floor(Math.random() * CREATURES.length)
-        const creature = CREATURES[randomIndex]
+      const dropTimeout = setTimeout(() => {
+        const creature = getRandomCreature()
         setSelectedCreature(creature)
         setStage('capsule-dropped')
       }, 1400)
 
-      setTimeout(() => setStage('capsule-shaking'), 1900)
+      const shakeTimeout = setTimeout(() => setStage('capsule-shaking'), 1900)
+      timeoutRef.current.push(dropTimeout, shakeTimeout)
     } //end of handleRoll function
     
     function handleOpenCapsule() {
