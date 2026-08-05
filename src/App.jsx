@@ -57,7 +57,7 @@ function App() {
   const totalPullsEarned = Math.floor(totalMinutesCoded / MINUTES_PER_PULL)
   
   //pity system state - tracks rolls since last rare creature, to guarantee a rare creature after a certain number of rolls, and persist it to local storage
-  //part of commit 1: add pity state (no behaviour change)
+  //part of commit 1: add pity state (no behaviour changes), add a new piece of state (pityCounter), initialized from localStorage (same pattern as pullsSpent and favorites). Added a useEffect to persist i to localStorage whenever it changes. Pass pityCounter down as a prop to RollPage, currently not used but wired. Confirmed the new state loads and saves correctly.
   const [pityCounter, setPityCounter] = useState(() => {
     const saved = localStorage.getItem('codepull-pity-counter')
     return saved ? Number(saved) : 0
