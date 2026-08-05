@@ -22,19 +22,19 @@ const RARITY_ODDS = {
 }
 
 //pity thresholds - how many pulls without a rare/legendary before one gets guarenteed
-const RARE_PITY_THRESHOLD = 10
-const LEGENDARY_PITY_THRESHOLD = 90
+export const RARE_PITY_THRESHOLD = 10
+export const LEGENDARY_PITY_THRESHOLD = 90
 
 //function that picks a random creature based on rarity odds
-export function getRandomCreature(pityCounter = 0) {
+export function getRandomCreature(rarePityCounter = 0, legendaryPityCounter = 0) {
   //pity overrides: force a minimum rarity once the counter reaches a threshold
   let forcedRarity = null
-  if (pityCounter >= LEGENDARY_PITY_THRESHOLD) {
+  if (legendaryPityCounter >= LEGENDARY_PITY_THRESHOLD) {
     forcedRarity = 'legendary'
-  } else if (pityCounter >= RARE_PITY_THRESHOLD) {
+  } else if (rarePityCounter >= RARE_PITY_THRESHOLD) {
     forcedRarity = 'rare'
   }
-  
+
   let chosenRarity = 'common' //default to common in case of rounding errors
   
   if (forcedRarity) {

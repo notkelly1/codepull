@@ -57,15 +57,22 @@ function App() {
   const totalPullsEarned = Math.floor(totalMinutesCoded / MINUTES_PER_PULL)
   
   //pity system state - tracks rolls since last rare creature, to guarantee a rare creature after a certain number of rolls, and persist it to local storage
-  //part of commit 1: add pity state (no behaviour changes), add a new piece of state (pityCounter), initialized from localStorage (same pattern as pullsSpent and favorites). Added a useEffect to persist i to localStorage whenever it changes. Pass pityCounter down as a prop to RollPage, currently not used but wired. Confirmed the new state loads and saves correctly.
-  const [pityCounter, setPityCounter] = useState(() => {
-    const saved = localStorage.getItem('codepull-pity-counter')
+  //commit 4: new seperaet pity counters for rare and legendary
+  const [rarePityCounter, setRarePityCounter] = useState(() => {
+    const saved = localStorage.getItem('rare-pity-counter')
     return saved ? Number(saved) : 0
   })
-
   useEffect(() => {
-    localStorage.setItem('pity-counter', pityCounter)
-  }, [pityCounter])
+    localStorage.setItem('rare-pity-counter', rarePityCounter)
+  }, [rarePityCounter])
+
+  const [legendaryPityCounter, setLegendaryPityCounter] = useState(() => {
+    const saved = localStorage.getItem('legendary-pity-counter')
+    return saved ? Number(saved) : 0
+  })
+  useEffect(() => {
+    localStorage.setItem('legendary-pity-counter', legendaryPityCounter)
+  }, [legendaryPityCounter])
 
   //track how many pulls have already been spent and persist it to local storage
   const [pullsSpent, setPullsSpent] = useState(() => {
@@ -154,8 +161,10 @@ function App() {
               totalMinutesCoded={totalMinutesCoded}
               canClaimDaily={canClaimDaily}
               claimDailyBonus={claimDailyBonus}
-              pityCounter={pityCounter}
-              setPityCounter={setPityCounter}
+              rarePityCounter={rarePityCounter}
+              setRarePityCounter={setRarePityCounter}
+              legendaryPityCounter={legendaryPityCounter}
+              setLegendaryPityCounter={setLegendaryPityCounter}
             />
           } 
         /> {/*closes route for RollPage*/}

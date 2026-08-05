@@ -387,3 +387,16 @@ button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/*pulses the pity indicator once its close to triggering*/
+.pity-warning {
+  color: var(--color-legendary);
+  font-weight: 700;
+  animation: pulse 1s ease-in-out infinite;
+  text-shadow: 0 0 10px var(--color-legendary);
+}
+
+@keyframes pulse {
+  0%, 100% {opacity: 1;}
+  50% {opacity: 0.5;}
+}

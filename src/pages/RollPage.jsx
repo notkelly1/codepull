@@ -1,7 +1,7 @@
 //holds current roll logic
 {/*used to remember things between renders instead of forgetting them instantly*/}
 import {useState, useEffect, useRef} from 'react' 
-import {getRandomCreature} from '../creatures'
+import {getRandomCreature, RARE_PITY_THRESHOLD, LEGENDARY_PITY_THRESHOLD } from '../creatures'
 //import custom UI
 import catHungry from '../assets/cat-hungry.png'
 import catFed from '../assets/cat-fed.png'
@@ -28,7 +28,7 @@ if (typeof window !== 'undefined' && !window.__pityTested) {
   }
 }
 
-function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, pityCounter, setPityCounter }) {
+function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
   const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
@@ -67,15 +67,20 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       setStage('twisting')
 
       const dropTimeout = setTimeout(() => {
-        const creature = getRandomCreature()
+        const creature = getRandomCreature(rarePityCounter, legendaryPityCounter) //passes the pityCounter to getRandomCreature to influence roll odds based on pity system
         setSelectedCreature(creature)
         setStage('capsule-dropped')
 
         //update pity counter based on rarity of the creature rolled
+        //commit 6: split pity into rare and legendary counters seperately. Previously a single pityCounter was used and reset on any non-common pull, meaning that a rare pull would also wipe legendary pity progress. Now, rarePityCounter and legendaryPityCounter are creaetd to track pity seperately, so obtaning a rare ro legendary would notimpact each tier's respective pity progress. getRandomCreature and handleRoll accept both counters accordingly.
         if (creature.rarity === 'common'){
-          setPityCounter((prev) => prev + 1)
-        } else {
-          setPityCounter(0) //reset pity counter if a rare or legendary creature is rolled
+          setRarePityCounter((prev) => prev + 1)
+          setLegendaryPityCounter((prev) => prev + 1)
+        } else if (creature.rarity === 'rare') {
+          setRarePityCounter(0) //reset pity counter if a rare creature is rolled
+          setLegendaryPityCounter((prev) => prev + 1)
+        } else if (creature.rarity === 'legendary') {
+          setLegendaryPityCounter(0) //reset pity counter if alegendary creature is rolled
         }
       }, 1400) //close the setTimeout for dropping the capsule
 
@@ -103,6 +108,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       <div className="stats-bar">
         <span>⏱ {totalMinutesCoded}m coded</span>
         <span>🎟 {pullsAvailable} pulls</span>
+        <span className={pityCounter >= RARE_PITY_THRESHOLD - 3 ? 'warning' : ''}>🍀 Pity: {pityCounter}/{RARE_PITY_THRESHOLD}</span> {/*the span gains an extra warning class when the pity counter is within 3 of the rare pity threshold */}
       </div>
       {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds.*/}
       <p>Pity: {pityCounter}</p>
