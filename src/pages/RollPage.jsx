@@ -53,7 +53,14 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
         const creature = getRandomCreature()
         setSelectedCreature(creature)
         setStage('capsule-dropped')
-      }, 1400)
+
+        //update pity counter based on rarity of the creature rolled
+        if (creature.rarity === 'common'){
+          setPityCounter((prev) => prev + 1)
+        } else {
+          setPityCounter(0) //reset pity counter if a rare or legendary creature is rolled
+        }
+      }, 1400) //close the setTimeout for dropping the capsule
 
       const shakeTimeout = setTimeout(() => setStage('capsule-shaking'), 1900)
       timeoutRef.current.push(dropTimeout, shakeTimeout)
@@ -80,6 +87,9 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
         <span>⏱ {totalMinutesCoded}m coded</span>
         <span>🎟 {pullsAvailable} pulls</span>
       </div>
+      {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds */}
+      <p>Pity: {pityCounter}</p>
+
       {canClaimDaily && (
         <button onClick={claimDailyBonus}>Claim Daily Bonus Pull</button>
       )}
