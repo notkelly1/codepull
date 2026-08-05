@@ -11,6 +11,23 @@ import capsulesFrame1 from '../assets/capsules-1.png'
 import capsulesFrame2 from '../assets/capsules-2.png'
 import capsulesFrame3 from '../assets/capsules-3.png'
 
+//TEMPORARY TEST — remove after verifying
+if (typeof window !== 'undefined' && !window.__pityTested) {
+  window.__pityTested = true
+  console.log('--- Pity test: pityCounter=0 (should be mostly common) ---')
+  for (let i = 0; i < 10; i++) {
+    console.log(getRandomCreature(0).rarity)
+  }
+  console.log('--- Pity test: pityCounter=25 (should ALWAYS be rare or legendary) ---')
+  for (let i = 0; i < 10; i++) {
+    console.log(getRandomCreature(25).rarity)
+  }
+  console.log('--- Pity test: pityCounter=95 (should ALWAYS be legendary) ---')
+  for (let i = 0; i < 10; i++) {
+    console.log(getRandomCreature(95).rarity)
+  }
+}
+
 function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, pityCounter, setPityCounter }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
@@ -87,7 +104,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
         <span>⏱ {totalMinutesCoded}m coded</span>
         <span>🎟 {pullsAvailable} pulls</span>
       </div>
-      {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds */}
+      {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds.*/}
       <p>Pity: {pityCounter}</p>
 
       {canClaimDaily && (

@@ -21,21 +21,39 @@ const RARITY_ODDS = {
   legendary: 0.05,
 }
 
+//pity thresholds - how many pulls without a rare/legendary before one gets guarenteed
+const RARE_PITY_THRESHOLD = 10
+const LEGENDARY_PITY_THRESHOLD = 90
+
 //function that picks a random creature based on rarity odds
-export function getRandomCreature() {
-  const roll = Math.random()
-
-  //go through the rarity odds and subtract each ones weight from the roll
-  let cumulativeProbability = 0
-  let chosenRarity = 'common' //default to common in case of rounding errors
-
-  for (const rarity in RARITY_ODDS) {
-    cumulativeProbability += RARITY_ODDS[rarity]
-    if (roll < cumulativeProbability) {
-      chosenRarity = rarity
-      break
-    }
+export function getRandomCreature(pityCounter = 0) {
+  //pity overrides: force a minimum rarity once the counter reaches a threshold
+  let forcedRarity = null
+  if (pityCounter >= LEGENDARY_PITY_THRESHOLD) {
+    forcedRarity = 'legendary'
+  } else if (pityCounter >= RARE_PITY_THRESHOLD) {
+    forcedRarity = 'rare'
   }
+  
+  let chosenRarity = 'common' //default to common in case of rounding errors
+  
+  if (forcedRarity) {
+    chosenRarity = forcedRarity
+  } else {
+    //normal weighted roll from before
+    const roll = Math.random()
+
+    //go through the rarity odds and subtract each ones weight from the roll
+    let cumulativeProbability = 0
+
+    for (const rarity in RARITY_ODDS) {
+      cumulativeProbability += RARITY_ODDS[rarity]
+      if (roll < cumulativeProbability) {
+        chosenRarity = rarity
+        break
+      }
+    } //close the for loop
+  } //close the else for normal weighted roll
 
   //filter the creatures by the chosen rarity
   const pool = CREATURES.filter(creature => creature.rarity === chosenRarity)
