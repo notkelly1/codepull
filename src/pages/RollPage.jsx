@@ -11,7 +11,7 @@ import capsulesFrame1 from '../assets/capsules-1.png'
 import capsulesFrame2 from '../assets/capsules-2.png'
 import capsulesFrame3 from '../assets/capsules-3.png'
 
-function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus }) {
+function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, pityCounter, setPityCounter }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
   const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
@@ -25,7 +25,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
     return () => {
       timeoutRef.current.forEach(clearTimeout)
     }
-  }, [])
+  }, []) 
 
   //cycles frames while shaking
   useEffect(() => {

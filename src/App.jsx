@@ -56,6 +56,17 @@ function App() {
 
   const totalPullsEarned = Math.floor(totalMinutesCoded / MINUTES_PER_PULL)
   
+  //pity system state - tracks rolls since last rare creature, to guarantee a rare creature after a certain number of rolls, and persist it to local storage
+  //part of commit 1: add pity state (no behaviour change)
+  const [pityCounter, setPityCounter] = useState(() => {
+    const saved = localStorage.getItem('codepull-pity-counter')
+    return saved ? Number(saved) : 0
+  })
+
+  useEffect(() => {
+    localStorage.setItem('pity-counter', pityCounter)
+  }, [pityCounter])
+
   //track how many pulls have already been spent and persist it to local storage
   const [pullsSpent, setPullsSpent] = useState(() => {
     const saved = localStorage.getItem('codepull-pulls-spent')
@@ -143,6 +154,8 @@ function App() {
               totalMinutesCoded={totalMinutesCoded}
               canClaimDaily={canClaimDaily}
               claimDailyBonus={claimDailyBonus}
+              pityCounter={pityCounter}
+              setPityCounter={setPityCounter}
             />
           } 
         /> {/*closes route for RollPage*/}
