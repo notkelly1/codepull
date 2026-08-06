@@ -38,7 +38,8 @@ nav {
   padding: 12px 20px;
   border-radius: 999px;
   background: rgba(255,255,255,0.06);
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
+  width: fit-content;
 }
 
 nav a {
@@ -64,3 +65,17 @@ nav a:hover {
   font-size: 0.9rem;
 }
 
+/*hackatime button styling&*/
+.hackatime-button {
+  background: #CC709F;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+.hackatime-button:hover {
+  background: #9B2460;
+}

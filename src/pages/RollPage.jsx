@@ -11,7 +11,7 @@ import capsulesFrame1 from '../assets/capsules-1.png'
 import capsulesFrame2 from '../assets/capsules-2.png'
 import capsulesFrame3 from '../assets/capsules-3.png'
 
-//TEMPORARY TEST — remove after verifying
+/*TEMPORARY TEST — remove after verifying
 if (typeof window !== 'undefined' && !window.__pityTested) {
   window.__pityTested = true
   console.log('--- Pity test: pityCounter=0 (should be mostly common) ---')
@@ -26,7 +26,7 @@ if (typeof window !== 'undefined' && !window.__pityTested) {
   for (let i = 0; i < 10; i++) {
     console.log(getRandomCreature(95).rarity)
   }
-}
+}*/
 
 function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
@@ -108,10 +108,10 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       <div className="stats-bar">
         <span>⏱ {totalMinutesCoded}m coded</span>
         <span>🎟 {pullsAvailable} pulls</span>
-        <span className={pityCounter >= RARE_PITY_THRESHOLD - 3 ? 'warning' : ''}>🍀 Pity: {pityCounter}/{RARE_PITY_THRESHOLD}</span> {/*the span gains an extra warning class when the pity counter is within 3 of the rare pity threshold */}
+  
+        <span className={legendaryPityCounter >= LEGENDARY_PITY_THRESHOLD - 3 ? 'warning' : ''}>🍀 Pity: {legendaryPityCounter}/{LEGENDARY_PITY_THRESHOLD}</span> {/*the span gains an extra warning class when the pity counter is within 3 of the legendary pity threshold */}
       </div>
-      {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds.*/}
-      <p>Pity: {pityCounter}</p>
+      {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds. <p>Pity: {legendaryPityCounter}</p>*/}
 
       {canClaimDaily && (
         <button onClick={claimDailyBonus}>Claim Daily Bonus Pull</button>
@@ -130,7 +130,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
                 className="layer cat-clickable"
                 alt="Feed the cat for one pull!"
                 onClick={handleRoll}
-                style={{cursor: pullsAvailable <= 0 ? 'not-allowed' : 'pointer', opacity: pullsAvailable <= 0 ? 0.5 : 1}}
+                style={{cursor: pullsAvailable <= 0 ? 'not-allowed' : 'pointer'}}
               />
               <img src={handleUp} className="layer" alt="Handle" />
             </>

@@ -51,7 +51,7 @@ function App() {
   const MINUTES_PER_PULL = 10
 
   const totalMinutesCoded = codingStats
-    ? Math.floor(codingStats.data.total_seconds / 60)
+    ? Math.floor(codingStats.total_seconds / 60)
     : 0
 
   const totalPullsEarned = Math.floor(totalMinutesCoded / MINUTES_PER_PULL)
@@ -134,7 +134,7 @@ function App() {
       <nav>
         {/*conditionally render the connect with Hackatime button if the user is not logged in (no token)*/}
         {!hackatimeToken && ( 
-          <a href={`https://hackatime.hackclub.com/oauth/authorize?client_id=${import.meta.env.VITE_HACKATIME_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/callback&response_type=code&scope=profile+read`}>
+          <a className="hackatime-button" href={`https://hackatime.hackclub.com/oauth/authorize?client_id=${import.meta.env.VITE_HACKATIME_CLIENT_ID}&redirect_uri=${window.location.origin}/auth/callback&response_type=code&scope=profile+read`}>
             Connect with Hackatime
           </a>
         )}
@@ -142,13 +142,11 @@ function App() {
         <Link to="/collection">Collection</Link>
       </nav>
 
-      {/*temporary debug tool*/}
-      {codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}
+      {/*temporary debug tool {codingStats && <pre>{JSON.stringify(codingStats, null, 2)}</pre>}*/}
 
       <Routes>
         {/*route for the auth callback page, which is where the user is redirected after logging in to Hackatime*/} 
-        <Route path="/auth/callback" element={<AuthCallbackPage 
-            />
+        <Route path="/auth/callback" element={<AuthCallbackPage onSuccess={setHackatimeToken}/>
           } 
         /> {/*closes route for AuthCallbackPage*/}
 
