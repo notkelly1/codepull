@@ -74,6 +74,17 @@ function App() {
     localStorage.setItem('legendary-pity-counter', legendaryPityCounter)
   }, [legendaryPityCounter])
 
+  //new constant for tracking duplicate creatures and turning them into currency, which can be used to buy more pulls
+  //convert duplicate pulls into shard currency instead of duplicate entries. addToCollection now checks if the creature's ID already exists in the collection, and if so, awards shards scaling by the duplicate's rarity
+  const [shards, setShards] = useState(() => {
+    const saved = localStorage.getItem('shards')
+    return saved ? Number(saved) : 0
+  }) 
+
+  useEffect(() => {
+    localStorage.setItem('shards', shards)
+  }, [shards])
+  
   //track how many pulls have already been spent and persist it to local storage
   const [pullsSpent, setPullsSpent] = useState(() => {
     const saved = localStorage.getItem('codepull-pulls-spent')
@@ -93,8 +104,20 @@ function App() {
 
   //creating new array with the new creature added to the end of the previous collection
   function addToCollection(creature) {
-    setCollection(prevCollection => [...prevCollection, creature])
-  }
+    setCollection(prevCollection =>{
+      //if the creature is already owned, add shards instead of adding it to the collection
+      const alreadyOwned = collection.some(c => c.id === creature.id)
+
+      if (alreadyOwned) {
+        //award shards for duplicate creatures based on rarity
+        const shardValue = creature.rarity === 'legendary' ? 10 : creature.rarity === 'rare' ? 5 : 1
+        setShards((prev) => prev + shardValue)
+        return prevCollection //return previous collection without adding the duplicate creature
+      }
+
+      return [...prevCollection, creature]
+    })//close setCollection
+  }//close addToCollection
 
   //daily bonus pull state
   const [lastClaimDate, setLastClaimDate] = useState(() => {
@@ -163,6 +186,8 @@ function App() {
               setRarePityCounter={setRarePityCounter}
               legendaryPityCounter={legendaryPityCounter}
               setLegendaryPityCounter={setLegendaryPityCounter}
+              shards={shards}
+              setShards={setShards}
             />
           } 
         /> {/*closes route for RollPage*/}

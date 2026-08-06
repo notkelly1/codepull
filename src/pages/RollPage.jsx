@@ -28,7 +28,7 @@ if (typeof window !== 'undefined' && !window.__pityTested) {
   }
 }*/
 
-function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter }) {
+function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter, shards, setShards }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
   const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
