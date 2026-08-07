@@ -2,6 +2,7 @@
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import { useState, useEffect } from 'react'
 import { fetchCodingStats } from './hackatime' 
+import { getShardValue } from './creatures' //import getShardValue function to calculate shard value for duplicate creatures
 //BrowserRouter enables routing between pages in the app, decides which page to show based on current URL
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import RollPage from './pages/RollPage'
@@ -109,9 +110,7 @@ function App() {
       const alreadyOwned = collection.some(c => c.id === creature.id)
 
       if (alreadyOwned) {
-        //award shards for duplicate creatures based on rarity
-        const shardValue = creature.rarity === 'legendary' ? 10 : creature.rarity === 'rare' ? 5 : 1
-        setShards((prev) => prev + shardValue)
+        setShards((prev) => prev + getShardValue(creature.rarity)) //get the shard value based on rarity of duplicated creature from creatures.js
         return prevCollection //return previous collection without adding the duplicate creature
       }
 
@@ -188,6 +187,7 @@ function App() {
               setLegendaryPityCounter={setLegendaryPityCounter}
               shards={shards}
               setShards={setShards}
+              collection={collection}
             />
           } 
         /> {/*closes route for RollPage*/}

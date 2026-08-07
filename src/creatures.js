@@ -63,3 +63,14 @@ export function getRandomCreature(rarePityCounter = 0, legendaryPityCounter = 0)
   return pool[randomIndex]
 
 } // close the getRandomCreature function
+
+//shard values for duplicate creatures based on rarity
+export function getShardValue(rarity) {
+  if (rarity === 'legendary') {
+    return 20
+  }
+  if (rarity === 'rare') {
+    return 5
+  }
+  return 1 //common creatures give 1 shard
+}

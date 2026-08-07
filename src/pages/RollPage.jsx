@@ -1,7 +1,7 @@
 //holds current roll logic
 {/*used to remember things between renders instead of forgetting them instantly*/}
 import {useState, useEffect, useRef} from 'react' 
-import {getRandomCreature, RARE_PITY_THRESHOLD, LEGENDARY_PITY_THRESHOLD } from '../creatures'
+import {getRandomCreature, RARE_PITY_THRESHOLD, LEGENDARY_PITY_THRESHOLD, getShardValue } from '../creatures'
 //import custom UI
 import catHungry from '../assets/cat-hungry.png'
 import catFed from '../assets/cat-fed.png'
@@ -11,24 +11,7 @@ import capsulesFrame1 from '../assets/capsules-1.png'
 import capsulesFrame2 from '../assets/capsules-2.png'
 import capsulesFrame3 from '../assets/capsules-3.png'
 
-/*TEMPORARY TEST — remove after verifying
-if (typeof window !== 'undefined' && !window.__pityTested) {
-  window.__pityTested = true
-  console.log('--- Pity test: pityCounter=0 (should be mostly common) ---')
-  for (let i = 0; i < 10; i++) {
-    console.log(getRandomCreature(0).rarity)
-  }
-  console.log('--- Pity test: pityCounter=25 (should ALWAYS be rare or legendary) ---')
-  for (let i = 0; i < 10; i++) {
-    console.log(getRandomCreature(25).rarity)
-  }
-  console.log('--- Pity test: pityCounter=95 (should ALWAYS be legendary) ---')
-  for (let i = 0; i < 10; i++) {
-    console.log(getRandomCreature(95).rarity)
-  }
-}*/
-
-function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter, shards, setShards }) {
+function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCoded, canClaimDaily, claimDailyBonus, rarePityCounter, setRarePityCounter, legendaryPityCounter, setLegendaryPityCounter, shards, setShards, collection }) {
   const [stage, setStage] = useState('idle') //rolling gachapon granular state: idle → coin-inserted → twisting → capsule-dropped → capsule-shaking → capsule-open → revealed
   const [selectedCreature, setSelectedCreature] = useState(null)
   const [ballFrame, setBallFrame] = useState(0) //current frame of the shaking capsule animation
@@ -36,6 +19,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
   //timeoutRef is used to store the IDs of the timeouts so that they can be cleared if the component unmounts (for example, if the user navigates away from roll page mid animation)
   //shake capsules
   const CAPSULE_FRAMES = [capsulesFrame1, capsulesFrame2, capsulesFrame3]
+  const [wasDuplicate, setWasDuplicate] = useState(false) //state to track if the last roll was a duplicate creature
   
   // clears pending timeouts for components
   useEffect(() => {
@@ -77,9 +61,10 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
           setRarePityCounter((prev) => prev + 1)
           setLegendaryPityCounter((prev) => prev + 1)
         } else if (creature.rarity === 'rare') {
-          setRarePityCounter(0) //reset pity counter if a rare creature is rolled
           setLegendaryPityCounter((prev) => prev + 1)
+          setRarePityCounter(0) //reset pity counter if a rare creature is rolled
         } else if (creature.rarity === 'legendary') {
+          setRarePityCounter((prev) => prev + 1)
           setLegendaryPityCounter(0) //reset pity counter if alegendary creature is rolled
         }
       }, 1400) //close the setTimeout for dropping the capsule
@@ -90,6 +75,12 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
     
     function handleOpenCapsule() {
       setStage('capsule-open')
+
+      //after capsule opens, immediately check whether the creature is already owned
+      const isDuplicate = collection.some(c => c.id === selectedCreature.id)
+      setWasDuplicate(isDuplicate) //update the wasDuplicate state based on whether the creature is already owned
+
+
       setTimeout(() => {
         setStage('revealed')
         addToCollection(selectedCreature)
@@ -100,6 +91,7 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
     function handleReset() {
       setStage('idle')
       setSelectedCreature(null)
+      setWasDuplicate(false) //reset the wasDuplicate state when resetting for a new roll
     }
 
   return (
@@ -108,8 +100,8 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
       <div className="stats-bar">
         <span>⏱ {totalMinutesCoded}m coded</span>
         <span>🎟 {pullsAvailable} pulls</span>
-  
         <span className={legendaryPityCounter >= LEGENDARY_PITY_THRESHOLD - 3 ? 'warning' : ''}>🍀 Pity: {legendaryPityCounter}/{LEGENDARY_PITY_THRESHOLD}</span> {/*the span gains an extra warning class when the pity counter is within 3 of the legendary pity threshold */}
+        <span>💎 Shards: {shards}</span> {/*the span displays the number of shards available */}
       </div>
       {/*temporary debug line for pity counter: track pity counter: increment on common pulls, reset on rare/legendary. Adds rarity-based logic to handleRoll so pityCounter is increased with each common pull and resets to 0 when a rare or legendary creature is rolled. Counter is not currently used to influence roll odds. <p>Pity: {legendaryPityCounter}</p>*/}
 
@@ -164,7 +156,13 @@ function RollPage({ addToCollection, pullsAvailable, spendPull, totalMinutesCode
               <img className="creature-image" src={selectedCreature.image} alt={selectedCreature.name} />
               <h2>{selectedCreature.name}</h2>
               <p className="rarity">Rarity: {selectedCreature.rarity}</p>
-              <button onClick={handleReset}>Roll Again</button>
+              {/*detect duplicate creatures and display a message */}
+              {wasDuplicate ? (
+                <p className="duplicate-notice">You already own this creature! You received {getShardValue(selectedCreature.rarity)} shards instead.</p>
+              ) : (
+                <p className="new-creature-notice">New creature added to your collection!</p>
+              )}
+              <button onClick={() => {handleReset(); handleRoll(); }}>Roll Again</button>
             </div>
           )}
         </div> {/*close gachapon machine div*/}
